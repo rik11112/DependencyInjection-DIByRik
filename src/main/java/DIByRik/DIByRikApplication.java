@@ -1,15 +1,15 @@
 package DIByRik;
 
-import DIByRik.annotations.Component;
-import DIByRik.annotations.EagerInit;
-import java.util.Set;
+import demo.RandomEagerInitClass;
 
 public class DIByRikApplication {
-
+    private static final DependencyContainer dependencyContainer = new DependencyContainer();
 
     public static void main(String[] args) {
-        DependencyContainer dependencyContainer = new DependencyContainer();
         dependencyContainer.init();
-    }
 
+        //TEMP
+        var random = dependencyContainer.getInstanceOfClass(RandomEagerInitClass.class);
+        random.doSomething();
+    }
 }

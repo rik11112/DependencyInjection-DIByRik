@@ -3,6 +3,7 @@ package DIByRik;
 import DIByRik.annotations.Autowired;
 import DIByRik.annotations.Component;
 import DIByRik.annotations.EagerInit;
+import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -13,8 +14,9 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class DependencyContainer {
-    private final Reflections reflections = new Reflections("");   //TODO package prefix configurable (or check if that's nessesary)
+    private final Reflections reflections = new Reflections("demo");   //TODO package prefix configurable (or check if that's nessesary)
     private final Set<Class<?>> components = reflections.getTypesAnnotatedWith(Component.class);
     private final Set<Class<?>> eagerInitClasses = reflections.getTypesAnnotatedWith(EagerInit.class);
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
@@ -23,6 +25,20 @@ public class DependencyContainer {
     public void init() {
         fillDependencyGraph();
         checkForCircularDependencies();
+    }
+
+    public <T> T getInstanceOfClass(Class<T> clazz) {
+        if (!instances.containsKey(clazz)) {
+            instances.put(clazz, createInstance(clazz));
+        }
+        return clazz.cast(instances.get(clazz));
+    }
+
+    private Object getInstance(Class<?> clazz) {
+        if (instances.containsKey(clazz)) {
+            return instances.get(clazz);
+        }
+        return createInstance(clazz);
     }
 
     private void checkForCircularDependencies() {
@@ -95,14 +111,8 @@ public class DependencyContainer {
                 .findFirst().orElse(constructors[0]);
     }
 
-    public Object getInstance(Class<?> clazz) {
-        if (instances.containsKey(clazz)) {
-            return instances.get(clazz);
-        }
-        return createInstance(clazz);
-    }
-
     private Object createInstance(Class<?> clazz) {
+        log.trace("Creating instance of {}", clazz.getSimpleName());
         Object instance = null;
         try {
             //Initializing with constructor injection
