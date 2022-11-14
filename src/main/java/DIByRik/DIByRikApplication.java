@@ -1,7 +1,15 @@
 package DIByRik;
 
-import org.reflections.Reflections;
+import DIByRik.annotations.Component;
+import DIByRik.annotations.EagerInit;
+import java.util.Set;
 
 public class DIByRikApplication {
-    private final Reflections reflections = new Reflections("");   //TODO package prefix configurable (or check if that's nessesary)
+
+
+    public static void main(String[] args) {
+        DependencyContainer dependencyContainer = new DependencyContainer();
+        dependencyContainer.init();
+    }
+
 }
