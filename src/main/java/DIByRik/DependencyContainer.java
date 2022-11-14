@@ -3,6 +3,7 @@ package DIByRik;
 import DIByRik.annotations.Autowired;
 import DIByRik.annotations.Component;
 import DIByRik.annotations.EagerInit;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
@@ -130,7 +131,7 @@ public class DependencyContainer {
         instances.put(clazz, instance);
 
         //Setter injection
-        Object finalInstance = instance;    //suboptimal scope, but now only needs to be initialized once
+        Object finalInstance = instance;    //suboptimal scope, but now it only needs to be declared once
         for (Method method : getMethodsWithAnnotation(clazz, Autowired.class)) {
             try {
                 // array[0] because setters should only have one parameter

@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    // For @Slf4j, @AllArgsConstructor, @Setter, @Getter, @ToString, ...
+    id "io.freefair.lombok" version "6.5.1"
 }
 
 group 'be.kdg.java3'
@@ -15,13 +17,6 @@ dependencies {
 
     // Dependency Graph (for making a dependency graph)
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
-
-    // Lombok (for @Log, @Setters, @Getters, @AllArgsConstructor, @NoArgsConstructor, ...)
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
-
-    testCompileOnly 'org.projectlombok:lombok:1.18.24'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     // Reflections library (for scanning packages)
     implementation 'org.reflections:reflections:0.10.2'
