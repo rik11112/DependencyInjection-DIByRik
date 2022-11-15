@@ -1,7 +1,7 @@
 package demo;
 
 public class RandomEagerInitClass {
-    private RandomClass randomClass;
+    private final RandomClass randomClass;
 
     public RandomEagerInitClass(RandomClass randomClass) {
         this.randomClass = randomClass;
