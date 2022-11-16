@@ -1,4 +1,4 @@
-package demo;
+package injection.testClasses;
 
 import DIByRik.annotations.Component;
 import DIByRik.annotations.EagerInit;

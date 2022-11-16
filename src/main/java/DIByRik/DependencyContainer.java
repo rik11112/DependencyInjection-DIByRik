@@ -36,6 +36,7 @@ public class DependencyContainer {
         if (reflections != null) {
             throw new IllegalStateException("DependencyContainer is already initialised");
         }
+        log.info("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
         reflections = new Reflections(mainClass.getPackageName());
         components = reflections.getTypesAnnotatedWith(Component.class);
         eagerInitClasses = reflections.getTypesAnnotatedWith(EagerInit.class);

@@ -1,9 +1,6 @@
 package DIByRik;
-
-import demo.RandomEagerInitClass;
-
 public class DIByRikApplication {
-    public static DependencyContainer run(Class<?> mainClass, String[] args) {
+    public static DependencyContainer run(Class<?> mainClass) {
         DependencyContainer dependencyContainer = new DependencyContainer();
         dependencyContainer.init(mainClass);
         return dependencyContainer;
