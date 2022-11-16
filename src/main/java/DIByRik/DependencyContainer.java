@@ -64,10 +64,7 @@ public class DependencyContainer {
                     .map(Class::getSimpleName)
                     .collect(Collectors.joining(", "));
             throw new RuntimeException(String.format("""
-                    Circular dependency detected between the following classes: %s
-                    This means that two classes depend on each other strongly.
-                    You can fix this by marking one of the injections with @Lazy.
-                    If they are constructor injections, consider changing one to a setter injection.""", cycleClasses));
+                    Circular dependency detected between the following classes: %s""", cycleClasses));
         }
     }
 

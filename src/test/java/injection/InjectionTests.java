@@ -13,7 +13,7 @@ public class InjectionTests {
         try {
             var container = DIByRikApplication.run(injection.normalConstructorInjectionShouldWork.A.class);
             var a = container.getInstanceOfClass(injection.normalConstructorInjectionShouldWork.A.class);
-            assertEquals(a.cContent(), "I am C");
+            assertEquals("I am C", a.cContent());
         } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());
         }
@@ -24,9 +24,20 @@ public class InjectionTests {
         try {
             var container = DIByRikApplication.run(injection.constructorInjectionWithInterfacesShouldWork.A.class);
             var a = container.getInstanceOfClass(injection.constructorInjectionWithInterfacesShouldWork.A.class);
-            assertEquals(a.cContent(), "I am C with interfaces");
+            assertEquals("I am C with interfaces", a.cContent());
         } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void circularDependencyShouldThrowException() {
+        try {
+            DIByRikApplication.run(injection.circulardependency.A.class);
+            fail("Exception not thrown");
+        } catch (Exception e) {
+            // Order of classes is not guaranteed so we this is the most specific check we can do
+            assertEquals("Circular dependency detected between the following classes", e.getMessage().split(":")[0]);
         }
     }
 }
