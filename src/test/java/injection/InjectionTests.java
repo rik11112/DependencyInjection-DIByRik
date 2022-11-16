@@ -1,7 +1,7 @@
 package injection;
 
 import DIByRik.DIByRikApplication;
-import injection.normalConstructorInjectionShouldWork.A;
+import DIByRik.exceptions.AmbigousMatchException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
