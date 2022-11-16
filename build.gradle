@@ -18,6 +18,11 @@ dependencies {
 
     // Reflections library (for scanning packages)
     implementation 'org.reflections:reflections:0.10.2'
+
+    // For logging (don't worry this version doesn't have the vulnerability)
+    implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.19.0'
 }
 
 test {
