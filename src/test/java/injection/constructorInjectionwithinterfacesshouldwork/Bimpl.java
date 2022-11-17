@@ -1,15 +1,16 @@
-package injection.normalConstructorInjectionShouldWork;
+package injection.constructorInjectionwithinterfacesshouldwork;
 
 import DIByRik.annotations.Component;
 
 @Component
-public class B {
+public class Bimpl implements B {
     private final C c;
 
-    public B(C c) {
+    public Bimpl(C c) {
         this.c = c;
     }
 
+    @Override
     public String cContent() {
         return c.myContent();
     }

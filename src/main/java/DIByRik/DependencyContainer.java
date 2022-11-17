@@ -1,8 +1,6 @@
 package DIByRik;
 
-import DIByRik.annotations.ConstructorInjection;
-import DIByRik.annotations.Component;
-import DIByRik.annotations.EagerInit;
+import DIByRik.annotations.*;
 import DIByRik.exceptions.AmbigousMatchException;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
@@ -27,6 +25,7 @@ import java.util.stream.Collectors;
 public class DependencyContainer {
     private Reflections reflections;
     private Set<Class<?>> components;
+    private Set<Method> beans;
     private Set<Class<?>> eagerInitClasses;
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
     private final Map<Class<?>, Object> instances = new HashMap<>();
@@ -39,6 +38,10 @@ public class DependencyContainer {
         log.info("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
         reflections = new Reflections(mainClass.getPackageName());
         components = reflections.getTypesAnnotatedWith(Component.class);
+        beans = reflections.getTypesAnnotatedWith(Configuration.class).stream()
+                .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))
+                .filter(m -> m.isAnnotationPresent(Bean.class))
+                .collect(Collectors.toSet());
         eagerInitClasses = reflections.getTypesAnnotatedWith(EagerInit.class);
         fillDependencyGraph();
         checkForCircularDependencies();
@@ -82,14 +85,28 @@ public class DependencyContainer {
         for (Class<?> component : components) {
             dependencyGraph.addVertex(component);
         }
+        beans.stream().map(Method::getReturnType).forEach(dependencyGraph::addVertex);
         //Will sometimes call addVertex again with the same values, but JGraphT ignores the duplicates
         for (Class<?> component : components) {
             for (Class<?> dependency : getConstructor(component).getParameterTypes()) {
-                dependencyGraph.addEdge(dependency, component);
+                try {
+                    dependencyGraph.addEdge(dependency, component);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(String.format("""
+                            Dependency %s is not a component, but is required by %s.
+                            Please add the @Component annotation to %s, or create a bean.""",
+                            dependency.getSimpleName(), component.getSimpleName(), dependency.getSimpleName()));
+                }
             }
         }
     }
 
+    /**
+     * Finds a constructor for a class, prioritising the @ConstructorInjection annotation.
+     * Also looks in subclasses or implementations in case of interfaces.
+     * @param componentClass The class to find a constructor for
+     * @return The created instance
+     */
     private Constructor<?> getConstructor(Class<?> componentClass) {
         var constructors = componentClass.getConstructors();
 
@@ -135,27 +152,54 @@ public class DependencyContainer {
         return getConstructor(subclassesOrImplementations.get(0));
     }
 
-    private Object createInstance(Class<?> clazz) {
-        log.log(Level.FINE, String.format("Creating instance of %s", clazz.getSimpleName()));
-        Object instance = null;
-        try {
-            //Initializing with constructor injection
-            Constructor<?> constructor = getConstructor(clazz);
-            var constructorParameters = Arrays.stream(constructor.getParameterTypes())
-                    .map(this::getInstance)
-                    .toArray();
+    private Object getBean(Class<?> clazz) {
+        var bean = beans.stream()
+                .filter(m -> m.getReturnType().equals(clazz))
+                .findFirst()
+                .orElse(null);
 
-            instance = constructor.newInstance(constructorParameters);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Could not create instance of " + clazz.getSimpleName() + "." +
-                    "\n^Did you try to access field or setter injected fields in the constructor?" +
-                    "\n^They are injected after the constructor finishes so inside the constructor they are null", e);
-        } catch (NullPointerException e) {
-            throw new NullPointerException("Field and setter injections are injected after the constructor has finished," +
-                    " so if you want to use them inside the constructor, constructor inject them " + clazz.getSimpleName());
+        // If it isn't a bean don't look further
+        if (bean == null) {
+            return null;
         }
 
-        //By putting the instance here already, we can handle some circular dependencies automatically
+        var methodParameters = Arrays.stream(bean.getParameterTypes())
+                .map(this::getInstance)
+                .toArray();
+
+        try {
+            return bean.invoke(getInstance(bean.getDeclaringClass()), methodParameters);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Could not create instance of " + clazz.getSimpleName() + " with bean " + bean.getName(), e);
+        }
+    }
+
+    /**
+     * Creates an instance of the given class.
+     * First checks if there's a bean of the class, if so it will use that.
+     * If not, it will try to find a constructor to create an instance. (see getConstructor)
+     * @param clazz The class to create an instance of
+     * @return The created instance
+     */
+    private Object createInstance(Class<?> clazz) {
+        log.log(Level.FINE, String.format("Creating instance of %s", clazz.getSimpleName()));
+        Object instance = getBean(clazz);   //Check if there's a bean for the class
+
+        if (instance == null) {
+            // If there's no bean, create an instance the normal way
+            try {
+                //Initializing with constructor injection
+                Constructor<?> constructor = getConstructor(clazz);
+                var constructorParameters = Arrays.stream(constructor.getParameterTypes())
+                        .map(this::getInstance)
+                        .toArray();
+
+                instance = constructor.newInstance(constructorParameters);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException("Could not create instance of " + clazz.getSimpleName() + ".", e);
+            }
+        }
+
         instances.put(clazz, instance);
         if (clazz != instance.getClass()) {
             log.log(Level.FINE, String.format("Instance of %s is actually an instance of %s, putting extra reference in instances",

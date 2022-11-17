@@ -1,4 +1,4 @@
-package injection.testClasses;
+package injection.componentswithbeansandviceversa;
 
 import DIByRik.annotations.Component;
 

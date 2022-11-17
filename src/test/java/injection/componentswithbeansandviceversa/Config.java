@@ -1,4 +1,4 @@
-package demo;
+package injection.componentswithbeansandviceversa;
 
 import DIByRik.annotations.Bean;
 import DIByRik.annotations.Configuration;
@@ -6,8 +6,8 @@ import DIByRik.annotations.Configuration;
 @Configuration
 public class Config {
     @Bean
-    public KlasseDieGeBeantWord beanTest(String oneTwoThree, Weee weee) {
-        return new KlasseDieGeBeantWord(oneTwoThree + "-" + weee.weee());
+    public BeanyClass beanTest(String oneTwoThree, Weee weee) {
+        return new BeanyClass(oneTwoThree + "-" + weee.weee());
     }
 
     @Bean

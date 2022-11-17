@@ -1,8 +1,8 @@
-package injection.testClasses;
+package injection.componentswithbeansandviceversa;
 
 import DIByRik.annotations.Component;
 
 @Component
 public interface RandomClass {
-    void randomMethod();
+    String randomMethod();
 }

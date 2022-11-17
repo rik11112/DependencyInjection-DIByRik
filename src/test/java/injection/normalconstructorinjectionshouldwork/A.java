@@ -1,4 +1,4 @@
-package injection.normalConstructorInjectionShouldWork;
+package injection.normalconstructorinjectionshouldwork;
 
 import DIByRik.annotations.Component;
 

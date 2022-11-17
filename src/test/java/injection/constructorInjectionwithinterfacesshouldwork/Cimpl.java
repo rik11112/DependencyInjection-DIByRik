@@ -1,4 +1,4 @@
-package injection.constructorInjectionWithInterfacesShouldWork;
+package injection.constructorInjectionwithinterfacesshouldwork;
 
 import DIByRik.annotations.Component;
 
