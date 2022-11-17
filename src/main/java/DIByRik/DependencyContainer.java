@@ -92,10 +92,17 @@ public class DependencyContainer {
                 try {
                     dependencyGraph.addEdge(dependency, component);
                 } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException(String.format("""
-                            Dependency %s is not a component, but is required by %s.
-                            Please add the @Component annotation to %s, or create a bean.""",
-                            dependency.getSimpleName(), component.getSimpleName(), dependency.getSimpleName()));
+
+                    if (dependency == component) {
+                        // If a class depends on itself, it will throw an IllegalArgumentException
+                        throw new IllegalArgumentException(String.format("Class %s depends on itself. This is not allowed.", component.getSimpleName()));
+                    } else {
+                        // Otherwise it will throw an IllegalArgumentException because the dependency is not a component
+                        throw new IllegalArgumentException(String.format("""
+                                        Dependency %s is not a component, but is required by %s.
+                                        Please add the @Component annotation to %s, or create a bean.""",
+                                dependency.getSimpleName(), component.getSimpleName(), dependency.getSimpleName()));
+                    }
                 }
             }
         }
@@ -104,6 +111,7 @@ public class DependencyContainer {
     /**
      * Finds a constructor for a class, prioritising the @ConstructorInjection annotation.
      * Also looks in subclasses or implementations in case of interfaces.
+     *
      * @param componentClass The class to find a constructor for
      * @return The created instance
      */
@@ -178,6 +186,7 @@ public class DependencyContainer {
      * Creates an instance of the given class.
      * First checks if there's a bean of the class, if so it will use that.
      * If not, it will try to find a constructor to create an instance. (see getConstructor)
+     *
      * @param clazz The class to create an instance of
      * @return The created instance
      */
