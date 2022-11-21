@@ -1,5 +1,8 @@
 package DIByRik.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+
 /**
  * @author Rik Puts
  *
@@ -7,5 +10,6 @@ package DIByRik.annotations;
  * This means that it contains @Beans, which are used to create instances of classes.
  */
 @Component
+@Target(ElementType.TYPE)
 public @interface Configuration {
 }

@@ -7,6 +7,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.reflections.Reflections;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Supplier;
@@ -27,6 +28,7 @@ public class DependencyContainer {
     private Set<Class<?>> components;
     private Set<Method> beans;
     private Set<Class<?>> eagerInitClasses;
+    private Set<Class<? extends Annotation>> componentVariants = new HashSet<>();
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
     private final Map<Class<?>, Object> instances = new HashMap<>();
     private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
