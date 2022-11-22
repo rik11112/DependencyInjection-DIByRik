@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * but if there still is ambiguity it will choose the first constructor (the highest in the document).
  */
 public class DependencyContainer {
-    private Reflections reflections;
+    private boolean isInitialised = false;
     private Set<Class<?>> components;
     private Set<Method> beans;
     private Set<Class<?>> eagerInitClasses;
@@ -32,29 +32,19 @@ public class DependencyContainer {
     private final Map<Class<?>, Object> instances = new HashMap<>();
     private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
 
-    public void init(Class<?> mainClass) {
-        if (reflections != null) {
+    public DependencyContainer(Class<?> mainClass) {
+        if (isInitialised) {
             throw new IllegalStateException("DependencyContainer is already initialised");
         }
         log.info("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
-        var annotationsPackageReflections = new Reflections("DIByRik.annotations");
-        @SuppressWarnings("unchecked")  // This is safe because we filter for isAnnotation before casting
-        var componentVariants = annotationsPackageReflections
-                .getTypesAnnotatedWith(Component.class).stream()
-                .filter(Class::isAnnotation)
-                .map(c -> (Class<? extends Annotation>) c)
-                .collect(Collectors.toSet());
-        reflections = new Reflections(mainClass.getPackageName());
-        components = reflections.getTypesAnnotatedWith(Component.class, true);
-        componentVariants.stream().map(reflections::getTypesAnnotatedWith).forEach(components::addAll);
-        beans = reflections.getTypesAnnotatedWith(Configuration.class).stream()
-                .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))
-                .filter(m -> m.isAnnotationPresent(Bean.class))
-                .collect(Collectors.toSet());
-        eagerInitClasses = reflections.getTypesAnnotatedWith(EagerInit.class);
+        var resolver = new DependencyResolver(mainClass);
+        components = resolver.getComponents();
+        beans = resolver.getBeans();
+        eagerInitClasses = resolver.getEagerInitClasses();
         fillDependencyGraph();
         checkForCircularDependencies();
-        createEagerInitInstances();
+        instantiateEagerInitInstances();
+        isInitialised = true;
     }
 
     public <T> T getInstanceOfClass(Class<T> clazz) {
@@ -81,12 +71,12 @@ public class DependencyContainer {
     }
 
     private void checkInitialised() {
-        if (reflections == null) {
+        if (!isInitialised) {
             throw new IllegalStateException("DependencyContainer has not been initialized yet.");
         }
     }
 
-    private void createEagerInitInstances() {
+    private void instantiateEagerInitInstances() {
         eagerInitClasses.forEach(this::getInstance);
     }
 
