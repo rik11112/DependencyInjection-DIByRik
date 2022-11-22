@@ -1,8 +1,9 @@
 package injection.componentswithbeansandviceversa;
 
 import DIByRik.annotations.Component;
+import DIByRik.annotations.Service;
 
-@Component
+@Service
 public interface RandomClass {
     String randomMethod();
 }

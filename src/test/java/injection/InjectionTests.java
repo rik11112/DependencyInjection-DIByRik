@@ -45,7 +45,8 @@ public class InjectionTests {
      * A depends on an interfaces which is implemented by a component,
      * which depends on another component and a bean.
      * The bean then depends on a component and another bean.
-     * Every class in question constributes to the return string of the first class. (Of which we assert the output)
+     * Some components are annotated with specializations of the component annotation instead of the component annotation itself.
+     * Every class in question contributes to the return string of the first class. (Of which we assert the output)
      * Basically if this test works, all other tests should work as well.
      */
     @Test

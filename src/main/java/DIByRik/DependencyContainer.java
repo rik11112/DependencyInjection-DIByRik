@@ -28,7 +28,6 @@ public class DependencyContainer {
     private Set<Class<?>> components;
     private Set<Method> beans;
     private Set<Class<?>> eagerInitClasses;
-    private Set<Class<? extends Annotation>> componentVariants = new HashSet<>();
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
     private final Map<Class<?>, Object> instances = new HashMap<>();
     private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
@@ -38,8 +37,16 @@ public class DependencyContainer {
             throw new IllegalStateException("DependencyContainer is already initialised");
         }
         log.info("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
+        var annotationsPackageReflections = new Reflections("DIByRik.annotations");
+        @SuppressWarnings("unchecked")  // This is safe because we filter for isAnnotation before casting
+        var componentVariants = annotationsPackageReflections
+                .getTypesAnnotatedWith(Component.class).stream()
+                .filter(Class::isAnnotation)
+                .map(c -> (Class<? extends Annotation>) c)
+                .collect(Collectors.toSet());
         reflections = new Reflections(mainClass.getPackageName());
-        components = reflections.getTypesAnnotatedWith(Component.class);
+        components = reflections.getTypesAnnotatedWith(Component.class, true);
+        componentVariants.stream().map(reflections::getTypesAnnotatedWith).forEach(components::addAll);
         beans = reflections.getTypesAnnotatedWith(Configuration.class).stream()
                 .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))
                 .filter(m -> m.isAnnotationPresent(Bean.class))

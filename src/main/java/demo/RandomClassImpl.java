@@ -2,8 +2,10 @@ package demo;
 
 import DIByRik.annotations.ConstructorInjection;
 import DIByRik.annotations.Component;
+import DIByRik.annotations.Repository;
+import DIByRik.annotations.Service;
 
-@Component
+@Repository
 public class RandomClassImpl implements RandomClass {
     private Weee weee;
     private KlasseDieGeBeantWord klasseDieGeBeantWord;
