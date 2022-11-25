@@ -18,6 +18,7 @@ public class DependencyResolver {
     private final Set<Class<?>> components;
     private final Set<Method> beans;
     private final Set<Class<?>> eagerInitClasses;
+    private final Set<Method> interceptedMethods;
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
     public DependencyResolver(Class<?> mainClass) {
@@ -36,6 +37,10 @@ public class DependencyResolver {
                 .filter(m -> m.isAnnotationPresent(Bean.class))
                 .collect(Collectors.toSet());
         eagerInitClasses = reflections.getTypesAnnotatedWith(EagerInit.class);
+        interceptedMethods = components.stream()
+                .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))
+                .filter(m -> m.isAnnotationPresent(Bean.class))
+                .collect(Collectors.toSet());
     }
 
     public Set<Class<?>> getComponents() {

@@ -1,9 +1,6 @@
 package demo;
 
-import DIByRik.annotations.ConstructorInjection;
-import DIByRik.annotations.Component;
-import DIByRik.annotations.Repository;
-import DIByRik.annotations.Service;
+import DIByRik.annotations.*;
 
 @Repository
 public class RandomClassImpl implements RandomClass {
@@ -20,6 +17,7 @@ public class RandomClassImpl implements RandomClass {
     }
 
     @Override
+    @Logged
     public void randomMethod() {
         System.out.println("I'm a random method!" + weee.weee() + " " + klasseDieGeBeantWord.getTest());
     }

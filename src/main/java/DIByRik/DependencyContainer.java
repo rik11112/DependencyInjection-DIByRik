@@ -2,6 +2,8 @@ package DIByRik;
 
 import DIByRik.annotations.*;
 import DIByRik.exceptions.AmbigousMatchException;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
@@ -205,6 +207,28 @@ public class DependencyContainer {
                 instance = constructor.newInstance(constructorParameters);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("Could not create instance of " + clazz.getSimpleName() + ".", e);
+            }
+        }
+
+        // Intercepting methods if needed
+        //TODO refactor with interception handlers
+        var interceptedMethods = Arrays.stream(instance.getClass().getMethods())
+                .filter(m -> Arrays.stream(m.getAnnotations())
+                        .anyMatch(a -> a.annotationType().equals(Logged.class))).toList();
+        if (interceptedMethods.size() > 0) {
+            ProxyFactory proxyFactory = new ProxyFactory();
+            proxyFactory.setSuperclass(instance.getClass());
+            proxyFactory.setFilter(interceptedMethods::contains);
+            MethodHandler methodHandler = (self, thisMethod, proceed, args) -> {
+//                log.log(Level.INFO, String.format("Intercepted method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
+                System.out.println(String.format("Intercepted method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
+                return proceed.invoke(self, args);
+            };
+            try {
+                instance = proxyFactory.create(new Class<?>[0], new Object[0], methodHandler);
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                     InvocationTargetException e) {
+                throw new RuntimeException(e);
             }
         }
 
