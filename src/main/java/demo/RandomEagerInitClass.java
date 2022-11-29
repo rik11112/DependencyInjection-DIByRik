@@ -13,7 +13,6 @@ public class RandomEagerInitClass {
         doSomething();
     }
 
-    @Logged
     public void doSomething() {
         randomClass.randomMethod();
     }

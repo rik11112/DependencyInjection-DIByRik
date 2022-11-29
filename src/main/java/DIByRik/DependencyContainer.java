@@ -8,6 +8,7 @@ import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.reflections.Reflections;
+import proxyTesting.MyClass;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -219,20 +220,19 @@ public class DependencyContainer {
         if (interceptedMethods.size() > 0) {
             ProxyFactory proxyFactory = new ProxyFactory();
             proxyFactory.setSuperclass(instance.getClass());
-            proxyFactory.setFilter(interceptedMethods::contains);   // Only intercept the methods that need to be, to avoid overhead
-            Object finalInstance = instance;
+            proxyFactory.setFilter(interceptedMethods::contains);
 
-            // General handler for every intercepted method
+            Object finalInstance = instance;
             MethodHandler methodHandler = (self, method, proceed, args) -> {
-//                log.log(Level.INFO, String.format("Intercepted method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
-                System.out.printf("Intercepted method %s of %s%n", method.getName(), clazz.getSimpleName());
+                System.out.println("Intercepted method");
+
                 try {
                     return method.invoke(finalInstance, args);
                 } finally {
-//                    log.log(Level.INFO, String.format("Finished method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
-                    System.out.printf("Finished method %s of %s%n", method.getName(), clazz.getSimpleName());
+                    System.out.println("Finished method");
                 }
             };
+
             try {
                 instance = proxyFactory.create(new Class<?>[0], new Object[0], methodHandler);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
