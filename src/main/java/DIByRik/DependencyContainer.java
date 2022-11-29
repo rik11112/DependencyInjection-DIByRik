@@ -18,6 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static DIByRik.InterceptionResolver.interceptMethods;
+
 /**
  * @author Rik
  * <p>
@@ -28,9 +30,9 @@ import java.util.stream.Collectors;
  */
 public class DependencyContainer {
     private boolean isInitialised = false;
-    private Set<Class<?>> components;
-    private Set<Method> beans;
-    private Set<Class<?>> eagerInitClasses;
+    private final Set<Class<?>> components;
+    private final Set<Method> beans;
+    private final Set<Class<?>> eagerInitClasses;
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
     private final Map<Class<?>, Object> instances = new HashMap<>();
     private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
@@ -213,33 +215,7 @@ public class DependencyContainer {
         }
 
         // Intercepting methods if needed
-        //TODO refactor with interception handlers
-        var interceptedMethods = Arrays.stream(instance.getClass().getMethods())
-                .filter(m -> Arrays.stream(m.getAnnotations())
-                        .anyMatch(a -> a.annotationType().equals(Logged.class))).toList();
-        if (interceptedMethods.size() > 0) {
-            ProxyFactory proxyFactory = new ProxyFactory();
-            proxyFactory.setSuperclass(instance.getClass());
-            proxyFactory.setFilter(interceptedMethods::contains);
-
-            Object finalInstance = instance;
-            MethodHandler methodHandler = (self, method, proceed, args) -> {
-                System.out.println("Intercepted method");
-
-                try {
-                    return method.invoke(finalInstance, args);
-                } finally {
-                    System.out.println("Finished method");
-                }
-            };
-
-            try {
-                instance = proxyFactory.create(new Class<?>[0], new Object[0], methodHandler);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                     InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        instance = interceptMethods(instance);
 
         instances.put(clazz, instance);
         if (clazz != instance.getClass()) {
