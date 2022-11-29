@@ -219,16 +219,18 @@ public class DependencyContainer {
         if (interceptedMethods.size() > 0) {
             ProxyFactory proxyFactory = new ProxyFactory();
             proxyFactory.setSuperclass(instance.getClass());
-            proxyFactory.setFilter(interceptedMethods::contains);
+            proxyFactory.setFilter(interceptedMethods::contains);   // Only intercept the methods that need to be, to avoid overhead
             Object finalInstance = instance;
-            MethodHandler methodHandler = (self, thisMethod, proceed, args) -> {
+
+            // General handler for every intercepted method
+            MethodHandler methodHandler = (self, method, proceed, args) -> {
 //                log.log(Level.INFO, String.format("Intercepted method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
-                System.out.printf("Intercepted method %s of %s%n", thisMethod.getName(), clazz.getSimpleName());
+                System.out.printf("Intercepted method %s of %s%n", method.getName(), clazz.getSimpleName());
                 try {
-                    return proceed.invoke(finalInstance, args);
+                    return method.invoke(finalInstance, args);
                 } finally {
 //                    log.log(Level.INFO, String.format("Finished method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
-                    System.out.printf("Finished method %s of %s%n", thisMethod.getName(), clazz.getSimpleName());
+                    System.out.printf("Finished method %s of %s%n", method.getName(), clazz.getSimpleName());
                 }
             };
             try {
