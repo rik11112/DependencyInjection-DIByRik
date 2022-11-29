@@ -15,10 +15,11 @@ public class ProxyTesting {
 
 		MethodHandler methodHandler = (self, method, proceed, args) -> {
 			System.out.println("Intercepted method");
+
 			try {
 				return method.invoke(myClass, args);
 			} finally {
-				System.out.print("Finished method");
+				System.out.println("Finished method");
 			}
 		};
 
