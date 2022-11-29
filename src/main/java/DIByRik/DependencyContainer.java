@@ -129,6 +129,7 @@ public class DependencyContainer {
 
         List<Class<?>> subclassesOrImplementations;
 
+        //TODO check for abstract class to, instead of just interfaces
         if (componentClass.isInterface()) {
             // If it's an interface check if we can find any of its implementations
             subclassesOrImplementations = components.stream()
@@ -219,10 +220,16 @@ public class DependencyContainer {
             ProxyFactory proxyFactory = new ProxyFactory();
             proxyFactory.setSuperclass(instance.getClass());
             proxyFactory.setFilter(interceptedMethods::contains);
+            Object finalInstance = instance;
             MethodHandler methodHandler = (self, thisMethod, proceed, args) -> {
 //                log.log(Level.INFO, String.format("Intercepted method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
-                System.out.println(String.format("Intercepted method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
-                return proceed.invoke(self, args);
+                System.out.printf("Intercepted method %s of %s%n", thisMethod.getName(), clazz.getSimpleName());
+                try {
+                    return proceed.invoke(finalInstance, args);
+                } finally {
+//                    log.log(Level.INFO, String.format("Finished method %s of %s", thisMethod.getName(), clazz.getSimpleName()));
+                    System.out.printf("Finished method %s of %s%n", thisMethod.getName(), clazz.getSimpleName());
+                }
             };
             try {
                 instance = proxyFactory.create(new Class<?>[0], new Object[0], methodHandler);
