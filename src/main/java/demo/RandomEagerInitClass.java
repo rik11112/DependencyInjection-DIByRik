@@ -14,6 +14,6 @@ public class RandomEagerInitClass {
     }
 
     public void doSomething() {
-        randomClass.randomMethod();
+        randomClass.randomMethod("foo");
     }
 }

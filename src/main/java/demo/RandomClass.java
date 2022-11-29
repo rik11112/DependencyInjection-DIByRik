@@ -4,5 +4,5 @@ import DIByRik.annotations.Component;
 
 @Component
 public interface RandomClass {
-    void randomMethod();
+    void randomMethod(String foo);
 }

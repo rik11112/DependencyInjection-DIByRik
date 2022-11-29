@@ -18,7 +18,7 @@ public class RandomClassImpl implements RandomClass {
 
     @Logged
     @Override
-    public void randomMethod() {
-        System.out.println("I'm a random method!" + weee.weee() + " " + klasseDieGeBeantWord.getTest());
+    public void randomMethod(String foo) {
+        System.out.println("I'm a random method!" + weee.weee() + " <" + foo + "> " + klasseDieGeBeantWord.getTest());
     }
 }
