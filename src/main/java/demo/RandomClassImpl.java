@@ -1,6 +1,7 @@
 package demo;
 
 import DIByRik.annotations.*;
+import DIByRik.annotations.interception.Logged;
 
 @Repository
 public class RandomClassImpl implements RandomClass {

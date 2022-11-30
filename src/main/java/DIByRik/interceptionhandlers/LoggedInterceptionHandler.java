@@ -1,10 +1,9 @@
 package DIByRik.interceptionhandlers;
 
-import DIByRik.annotations.Logged;
+import DIByRik.annotations.interception.Logged;
 import javassist.util.proxy.MethodHandler;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 public class LoggedInterceptionHandler implements InterceptionHandler {
 	@Override

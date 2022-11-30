@@ -1,22 +1,22 @@
 package DIByRik;
 
-import DIByRik.annotations.Intercepted;
-import DIByRik.annotations.Logged;
+import DIByRik.annotations.interception.Intercepted;
+import DIByRik.annotations.interception.Logged;
 import DIByRik.interceptionhandlers.InterceptionHandler;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import org.reflections.Reflections;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class InterceptionResolver {
 	private final ProxyFactory proxyFactory = new ProxyFactory();
 	private final Collection<InterceptionHandler> interceptionHandlers;
+	private final List<? extends Class<? extends Annotation>> interceptedAnnotations;
 
 	public InterceptionResolver() {
 		var handlerReflections = new Reflections(InterceptionHandler.class.getPackageName());
@@ -32,13 +32,20 @@ public class InterceptionResolver {
 					}
 				})
 				.toList();
+
+		var annotationReflections = new Reflections(Intercepted.class.getPackageName());
+		@SuppressWarnings("unchecked")  // This is safe because we filter for isAnnotation before casting
+		var _interceptedAnnotations = annotationReflections.getTypesAnnotatedWith(Intercepted.class).stream()
+				.filter(Class::isAnnotation)
+				.map(c -> (Class<? extends Annotation>) c)
+				.toList();
+		interceptedAnnotations = _interceptedAnnotations;	// Can't suppress warning on field initialisation
 	}
 
 	public Object interceptMethods(Object instance) {
-		//TODO refactor with interception handlers
 		var interceptedMethods = Arrays.stream(instance.getClass().getMethods())
 				.filter(m -> Arrays.stream(m.getAnnotations())
-						.anyMatch(a -> a.annotationType().equals(Logged.class))).toList();
+						.anyMatch(a -> interceptedAnnotations.contains(a.annotationType()))).toList();
 
 		if (interceptedMethods.isEmpty()) {
 			return instance;

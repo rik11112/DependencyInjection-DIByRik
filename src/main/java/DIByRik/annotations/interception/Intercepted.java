@@ -1,4 +1,4 @@
-package DIByRik.annotations;
+package DIByRik.annotations.interception;
 
 import DIByRik.interceptionhandlers.InterceptionHandler;
 

@@ -1,8 +1,6 @@
 package demo;
 
-import DIByRik.annotations.Component;
 import DIByRik.annotations.EagerInit;
-import DIByRik.annotations.Logged;
 
 @EagerInit
 public class RandomEagerInitClass {

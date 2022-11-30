@@ -1,6 +1,4 @@
-package DIByRik.annotations;
-
-import DIByRik.interceptionhandlers.LoggedInterceptionHandler;
+package DIByRik.annotations.interception;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
