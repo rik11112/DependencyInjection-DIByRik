@@ -8,7 +8,6 @@ import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.reflections.Reflections;
-import proxyTesting.MyClass;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;

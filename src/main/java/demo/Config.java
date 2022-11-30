@@ -7,7 +7,7 @@ import DIByRik.annotations.Configuration;
 public class Config {
     @Bean
     public KlasseDieGeBeantWord beanTest(String oneTwoThree, Weee weee) {
-        return new KlasseDieGeBeantWord(oneTwoThree + "-" + weee.weee());
+        return new KlasseDieGeBeantWord(oneTwoThree + "-" + weee.amountOfPrimesUnder(100));
     }
 
     @Bean
