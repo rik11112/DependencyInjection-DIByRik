@@ -2,6 +2,7 @@ package demo;
 
 import DIByRik.annotations.*;
 import DIByRik.annotations.interception.Logged;
+import DIByRik.annotations.interception.Timed;
 
 @Repository
 public class RandomClassImpl implements RandomClass {
@@ -17,7 +18,7 @@ public class RandomClassImpl implements RandomClass {
         this.klasseDieGeBeantWord = klasseDieGeBeantWord;
     }
 
-    @Logged
+    @Timed
     @Override
     public void randomMethod(String foo) {
         System.out.println("I'm a random method!" + weee.weee() + " <" + foo + "> " + klasseDieGeBeantWord.getTest());
