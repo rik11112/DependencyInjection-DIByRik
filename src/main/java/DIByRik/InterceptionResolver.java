@@ -55,12 +55,22 @@ public class InterceptionResolver {
 		proxyFactory.setFilter(interceptedMethods::contains);
 
 		Object finalInstance = instance;
-		InterceptionHandler interceptionHandler;
-		MethodHandler methodHandler = interceptionHandlers.stream()
-				.filter(h -> h.appliesTo(Logged.class))
-				.findFirst()
-				.map(h -> h.getMethodHandler(finalInstance))
-				.orElseThrow();
+		// general method handler for all intercepted methods, which delegates to the correct interception handler
+		MethodHandler methodHandler = (self, method, proceed, args) -> {
+			// find interception annotation on method (max one allowed)
+			var interceptionAnnotation = Arrays.stream(method.getAnnotations())
+					.filter(a -> interceptedAnnotations.contains(a.annotationType()))
+					.findFirst().orElseThrow();
+
+			// find interception handler for annotation
+			InterceptionHandler interceptionHandler = interceptionHandlers.stream()
+					.filter(h -> h.appliesTo(interceptionAnnotation.annotationType()))
+					.findFirst()
+					.orElseThrow();
+
+			// delegate to interception handler
+			return interceptionHandler.getMethodHandler(finalInstance).invoke(self, method, proceed, args);
+		};
 
 		try {
 			instance = proxyFactory.create(new Class<?>[0], new Object[0], methodHandler);
