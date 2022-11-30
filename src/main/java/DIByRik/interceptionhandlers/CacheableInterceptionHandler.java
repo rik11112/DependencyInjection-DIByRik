@@ -28,7 +28,7 @@ public class CacheableInterceptionHandler implements InterceptionHandler {
 				Map<String, Object> methodCache = cache.get(method);
 				if (methodCache.containsKey(argsKey)) {
 					// cache hit, return previous result
-					log.info("Cache hit for method: " + method.getName());
+					log.info(String.format("Cache hit for method: %s with args: %s", method.getName(), argsKey));
 					return methodCache.get(argsKey);
 				}
 			} else {
