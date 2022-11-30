@@ -1,16 +1,27 @@
 package DIByRik.interceptionhandlers;
 
+import DIByRik.annotations.Logged;
+import javassist.util.proxy.MethodHandler;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 public class LoggedInterceptionHandler implements InterceptionHandler {
 	@Override
-	public Method getMethodHandler() {
-		return null;
+	public boolean appliesTo(Class<? extends Annotation> annotation) {
+		return annotation.equals(Logged.class);
 	}
-//    public <T> T intercept(Method method, Object o, Object[] args) {
-//        System.out.println("Entering " + method.getName());
-//        T result = method.invoke(o, args);
-//        System.out.println("Exiting " + method.getName());
-//        return input;
-//    }
+
+	@Override
+	public MethodHandler getMethodHandler(Object instance) {
+		return (self, method, proceed, args) -> {
+			System.out.println("Intercepted method");
+
+			try {
+				return method.invoke(instance, args);
+			} finally {
+				System.out.println("Finished method");
+			}
+		};
+	}
 }

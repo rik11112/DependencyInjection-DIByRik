@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  *
  * @author Rik Puts
  */
-@Intercepted(handler = LoggedInterceptionHandler.class)
+@Intercepted()
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Logged {

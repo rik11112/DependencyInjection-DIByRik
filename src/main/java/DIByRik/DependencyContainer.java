@@ -18,8 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static DIByRik.InterceptionResolver.interceptMethods;
-
 /**
  * @author Rik
  * <p>
@@ -36,6 +34,7 @@ public class DependencyContainer {
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
     private final Map<Class<?>, Object> instances = new HashMap<>();
     private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
+    private final InterceptionResolver interceptionResolver = new InterceptionResolver();
 
     public DependencyContainer(Class<?> mainClass) {
         if (isInitialised) {
@@ -215,7 +214,7 @@ public class DependencyContainer {
         }
 
         // Intercepting methods if needed
-        instance = interceptMethods(instance);
+        instance = interceptionResolver.interceptMethods(instance);
 
         instances.put(clazz, instance);
         if (clazz != instance.getClass()) {

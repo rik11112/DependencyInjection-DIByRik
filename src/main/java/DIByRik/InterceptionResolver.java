@@ -5,16 +5,36 @@ import DIByRik.annotations.Logged;
 import DIByRik.interceptionhandlers.InterceptionHandler;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class InterceptionResolver {
-	private static final ProxyFactory proxyFactory = new ProxyFactory();
+	private final ProxyFactory proxyFactory = new ProxyFactory();
+	private final Collection<InterceptionHandler> interceptionHandlers;
 
-	public static Object interceptMethods(Object instance) {
+	public InterceptionResolver() {
+		var handlerReflections = new Reflections(InterceptionHandler.class.getPackageName());
+		interceptionHandlers = handlerReflections.getSubTypesOf(InterceptionHandler.class).stream()
+				.map(c -> {
+					var constructors = c.getConstructors();
+					if (constructors.length != 1)
+						throw new RuntimeException("InterceptionHandler implementations must have exactly one constructor");
+					try {
+						return (InterceptionHandler) constructors[0].newInstance();
+					} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+						throw new RuntimeException(e);
+					}
+				})
+				.toList();
+	}
+
+	public Object interceptMethods(Object instance) {
 		//TODO refactor with interception handlers
 		var interceptedMethods = Arrays.stream(instance.getClass().getMethods())
 				.filter(m -> Arrays.stream(m.getAnnotations())
@@ -28,15 +48,12 @@ public class InterceptionResolver {
 		proxyFactory.setFilter(interceptedMethods::contains);
 
 		Object finalInstance = instance;
-		MethodHandler methodHandler = (self, method, proceed, args) -> {
-			System.out.println("Intercepted method");
-
-			try {
-				return method.invoke(finalInstance, args);
-			} finally {
-				System.out.println("Finished method");
-			}
-		};
+		InterceptionHandler interceptionHandler;
+		MethodHandler methodHandler = interceptionHandlers.stream()
+				.filter(h -> h.appliesTo(Logged.class))
+				.findFirst()
+				.map(h -> h.getMethodHandler(finalInstance))
+				.orElseThrow();
 
 		try {
 			instance = proxyFactory.create(new Class<?>[0], new Object[0], methodHandler);
