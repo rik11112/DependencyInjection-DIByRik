@@ -4,8 +4,6 @@ import DIByRik.annotations.Bean;
 import DIByRik.annotations.Component;
 import DIByRik.annotations.Configuration;
 import DIByRik.annotations.EagerInit;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -18,8 +16,6 @@ public class DependencyResolver {
     private final Set<Class<?>> components;
     private final Set<Method> beans;
     private final Set<Class<?>> eagerInitClasses;
-    private final Set<Method> interceptedMethods;
-    private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
 
     public DependencyResolver(Class<?> mainClass) {
         var annotationsPackageReflections = new Reflections("DIByRik.annotations");
@@ -37,10 +33,6 @@ public class DependencyResolver {
                 .filter(m -> m.isAnnotationPresent(Bean.class))
                 .collect(Collectors.toSet());
         eagerInitClasses = reflections.getTypesAnnotatedWith(EagerInit.class);
-        interceptedMethods = components.stream()
-                .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))
-                .filter(m -> m.isAnnotationPresent(Bean.class))
-                .collect(Collectors.toSet());
     }
 
     public Set<Class<?>> getComponents() {

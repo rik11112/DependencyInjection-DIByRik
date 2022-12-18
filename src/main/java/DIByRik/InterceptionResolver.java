@@ -1,7 +1,6 @@
 package DIByRik;
 
 import DIByRik.annotations.interception.Intercepted;
-import DIByRik.annotations.interception.Logged;
 import DIByRik.interceptionhandlers.InterceptionHandler;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
