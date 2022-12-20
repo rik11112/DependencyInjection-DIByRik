@@ -1,6 +1,9 @@
 package DIByRik;
 
+import DIByRik.annotations.InputMapping;
+
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -22,16 +25,25 @@ public class InputMapper {
 			// Wait for input
 			String input = s.nextLine();
 
+			// Converting to its components
+			var components = input.split(" +");
+			var route = components[0];
+			Object[] args = Arrays.copyOfRange(components, 1, components.length - 1);
+
 			// Find the method that handles the input and invoke it
-			var route = routes.get(input);
-			if (route == null) {
+			var routeHandler = routes.get(route);
+			if (routeHandler == null) {
+				log.setParent(Logger.getLogger(InputMapper.class.getName()));
 				log.info("No route found for input: " + input);
 			} else {
 				try {
-					route.invoke(dependencyContainer.getInstanceOfClass(route.getDeclaringClass()));
+					log.setParent(Logger.getLogger(routeHandler.getDeclaringClass().getName()));
+					log.info(routeHandler.invoke(dependencyContainer.getInstanceOfClass(routeHandler.getDeclaringClass()), args).toString());
+				} catch (NullPointerException e) {
+					log.warning(String.format("method %s on route %s with args %s returned null", routeHandler.getName(), route, Arrays.toString(args)));
 				} catch (Exception e) {
 					//TODO: maak beter
-					log.warning("Failed to invoke route: " + route.getName() + " message: " + e.getMessage());
+					log.warning(e.getClass().getSimpleName() + " calling: " + routeHandler.getName() + ", message: " + e.getMessage());
 				}
 			}
 		}

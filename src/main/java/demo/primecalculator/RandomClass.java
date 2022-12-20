@@ -1,8 +1,8 @@
-package demo;
+package demo.primecalculator;
 
 import DIByRik.annotations.Component;
 
 @Component
 public interface RandomClass {
-    void randomMethod(String foo);
+    String randomMethod(String foo);
 }

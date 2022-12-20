@@ -1,4 +1,4 @@
-package demo;
+package demo.primecalculator;
 
 public class KlasseDieGeBeantWord {
     private final String test;
