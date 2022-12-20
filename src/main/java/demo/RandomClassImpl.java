@@ -5,6 +5,7 @@ import DIByRik.annotations.interception.Timed;
 
 @Repository
 public class RandomClassImpl implements RandomClass {
+
     private Weee weee;
     private KlasseDieGeBeantWord klasseDieGeBeantWord;
 

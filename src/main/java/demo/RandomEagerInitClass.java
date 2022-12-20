@@ -1,8 +1,9 @@
 package demo;
 
-import DIByRik.annotations.EagerInit;
+import DIByRik.annotations.Controller;
+import DIByRik.annotations.InputMapping;
 
-@EagerInit
+@Controller
 public class RandomEagerInitClass {
     private final RandomClass randomClass;
 
@@ -11,6 +12,7 @@ public class RandomEagerInitClass {
         doSomething();
     }
 
+    @InputMapping(input = "doSomething")
     public void doSomething() {
         randomClass.randomMethod("foo");
     }

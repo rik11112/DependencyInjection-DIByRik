@@ -8,7 +8,7 @@ public class DIByRikApplication {
         var resolver = new DependencyResolver(mainClass);
         var dependencyContainer = new DependencyContainer(mainClass, resolver);
         if (doInputMapping) {
-            var inputMapper = new InputMapper(dependencyContainer);
+            var inputMapper = new InputMapper(dependencyContainer, resolver);
             inputMapper.start();
         }
         return dependencyContainer;
