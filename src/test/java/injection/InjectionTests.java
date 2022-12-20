@@ -10,7 +10,7 @@ public class InjectionTests {
     @Test
     void normalConstructorInjectionShouldWork() {
         try {
-            var container = DIByRikApplication.run(injection.normalconstructorinjectionshouldwork.A.class);
+            var container = DIByRikApplication.run(injection.normalconstructorinjectionshouldwork.A.class, false);
             var a = container.getInstanceOfClass(injection.normalconstructorinjectionshouldwork.A.class);
             assertEquals("I am C", a.cContent());
         } catch (Exception e) {
@@ -21,7 +21,7 @@ public class InjectionTests {
     @Test
     void constructorInjectionWithInterfacesShouldWork() {
         try {
-            var container = DIByRikApplication.run(injection.constructorInjectionwithinterfacesshouldwork.A.class);
+            var container = DIByRikApplication.run(injection.constructorInjectionwithinterfacesshouldwork.A.class, false);
             var a = container.getInstanceOfClass(injection.constructorInjectionwithinterfacesshouldwork.A.class);
             assertEquals("I am C with interfaces", a.cContent());
         } catch (Exception e) {
@@ -32,7 +32,7 @@ public class InjectionTests {
     @Test
     void circularDependencyShouldThrowException() {
         try {
-            DIByRikApplication.run(injection.circulardependency.A.class);
+            DIByRikApplication.run(injection.circulardependency.A.class, false);
             fail("Exception not thrown");
         } catch (Exception e) {
             // Order of classes is not guaranteed so we this is the most specific check we can do
@@ -52,7 +52,7 @@ public class InjectionTests {
     @Test
     void componentsWithBeansAndViceVersaShouldWork() {
         try {
-            var container = DIByRikApplication.run(injection.componentswithbeansandviceversa.Config.class);
+            var container = DIByRikApplication.run(injection.componentswithbeansandviceversa.Config.class, false);
             var testClass = container.getInstanceOfClass(injection.componentswithbeansandviceversa.RandomEagerInitClass.class);
             assertEquals("I'm a random method!weee 123-weee", testClass.getTheString());
         } catch (Exception e) {

@@ -2,14 +2,9 @@ package DIByRik;
 
 import DIByRik.annotations.*;
 import DIByRik.exceptions.AmbigousMatchException;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
-import org.reflections.Reflections;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Supplier;
@@ -35,12 +30,11 @@ public class DependencyContainer {
     private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
     private final InterceptionResolver interceptionResolver = new InterceptionResolver();
 
-    public DependencyContainer(Class<?> mainClass) {
+    public DependencyContainer(Class<?> mainClass, DependencyResolver resolver) {
         if (isInitialised) {
             throw new IllegalStateException("DependencyContainer is already initialised");
         }
         log.info("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
-        var resolver = new DependencyResolver(mainClass);
         components = resolver.getComponents();
         beans = resolver.getBeans();
         eagerInitClasses = resolver.getEagerInitClasses();
@@ -130,7 +124,6 @@ public class DependencyContainer {
 
         List<Class<?>> subclassesOrImplementations;
 
-        //TODO check for abstract class to, instead of just interfaces
         if (componentClass.isInterface()) {
             // If it's an interface check if we can find any of its implementations
             subclassesOrImplementations = components.stream()

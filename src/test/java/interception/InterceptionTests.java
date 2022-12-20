@@ -13,7 +13,7 @@ public class InterceptionTests {
 
 	@Test
 	void cachedMethodsShouldRunFasterTheSecondTimeWithSameArgsAndStillReturnTheRightResult() {
-		var container = DIByRikApplication.run(InterceptionTests.class);
+		var container = DIByRikApplication.run(InterceptionTests.class, false);
 		var primeCalculator = container.getInstanceOfClass(PrimeCalculator.class);
 
 		var start = System.currentTimeMillis();

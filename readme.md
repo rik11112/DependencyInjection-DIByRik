@@ -33,7 +33,9 @@ zeggen da interception nie ondersteund is op eagerinit classes en mssn of throwe
   - [x] components worden aangemaakt
   - [x] beans worden aangemaakt
   - [x] cyclishe dependencies worden gedetecteerd
-  - [ ] interception tests
+  - [x] interception tests
 - [ ] readme (zie opdracht en boven)
 - [ ] keyboard input detection naar controllers
 - [x] demo applicatie
+- [ ] logging verschillende niveau's (Het moet mogelijk zijn om, mits aanpassing van het logging niveau, te kunnen zien welke objecten wanneer aangemaakt worden.
+)
