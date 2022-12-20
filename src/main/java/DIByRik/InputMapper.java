@@ -28,7 +28,18 @@ public class InputMapper {
 			// Converting to its components
 			var components = input.split(" +");
 			var route = components[0];
-			Object[] args = Arrays.copyOfRange(components, 1, components.length - 1);
+			Object[] args;
+			if (components.length > 1) {
+				args = Arrays.copyOfRange(components, 1, components.length);
+			} else {
+				args = new Object[0];
+			}
+
+			// Check if the stop command is given
+			if (route.equals("stop")) {
+				log.info("Stopping...");
+				break;
+			}
 
 			// Find the method that handles the input and invoke it
 			var routeHandler = routes.get(route);
