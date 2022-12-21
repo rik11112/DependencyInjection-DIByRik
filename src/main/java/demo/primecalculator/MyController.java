@@ -13,7 +13,7 @@ public class MyController {
 
     @InputMapping(input = "doSomething")
     public String doSomething() {
-         return randomClass.randomMethod("foo");
+         return randomClass.expensiveMethod("foo");
     }
 
     @InputMapping(input = "doSomethingElse")

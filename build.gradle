@@ -1,9 +1,11 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'be.kdg.java3'
 version '1.0-SNAPSHOT'
+mainClassName = 'demo.Main'
 
 repositories {
     mavenCentral()
@@ -30,4 +32,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+run {
+    standardInput = System.in
 }

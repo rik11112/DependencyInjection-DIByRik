@@ -2,9 +2,9 @@
 
 ## Commando's
 
-- Code comileren: `./gradlew build`
+- Code compileren: `./gradlew build`
 - Code testen: `./gradlew test`
-- Demo-applicatie uitvoeren: `TODO`
+- Demo-applicatie uitvoeren: `./gradlew run`
 
 ## Uitleg over framework
 
@@ -23,7 +23,7 @@ zeggen da interception nie ondersteund is op eagerinit classes en mssn of throwe
 - [x] @Configuration
 - [x] @Bean
 - [x] @Component
-- [ ] @Controller
+- [x] @Controller
 - [x] @Service
 - [x] @Repository
 - [x] Interception
@@ -35,7 +35,7 @@ zeggen da interception nie ondersteund is op eagerinit classes en mssn of throwe
   - [x] cyclishe dependencies worden gedetecteerd
   - [x] interception tests
 - [ ] readme (zie opdracht en boven)
-- [ ] keyboard input detection naar controllers
+- [x] keyboard input detection naar controllers
 - [x] demo applicatie
-- [ ] logging verschillende niveau's (Het moet mogelijk zijn om, mits aanpassing van het logging niveau, te kunnen zien welke objecten wanneer aangemaakt worden.
+- [x] logging verschillende niveau's (Het moet mogelijk zijn om, mits aanpassing van het logging niveau, te kunnen zien welke objecten wanneer aangemaakt worden.
 )

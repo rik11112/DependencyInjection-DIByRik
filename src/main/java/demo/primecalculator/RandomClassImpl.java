@@ -20,7 +20,7 @@ public class RandomClassImpl implements RandomClass {
 
 	@Timed
 	@Override
-	public String randomMethod(String foo) {
+	public String expensiveMethod(String foo) {
 		return "I'm a random method!" + primeCalculator.amountOfPrimesUnder(100) + " <" + foo + "> " + klasseDieGeBeantWord.getTest();
 	}
 }

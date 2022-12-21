@@ -33,7 +33,7 @@ public class InterceptionTests {
 
 	@Test
 	void differentCachedMethodsShouldNotInterfereWithEachOther() {
-		var container = DIByRikApplication.run(InterceptionTests.class);
+		var container = DIByRikApplication.run(InterceptionTests.class, false);
 		var primeCalculator = container.getInstanceOfClass(PrimeCalculator.class);
 
 		var weeeExpected = "weee ".repeat(1000);
@@ -48,7 +48,7 @@ public class InterceptionTests {
 
 	@Test
 	void cachedMethodsShouldOnlyHitIfInputIsTheSame() {
-		var container = DIByRikApplication.run(InterceptionTests.class);
+		var container = DIByRikApplication.run(InterceptionTests.class, false);
 		var primeCalculator = container.getInstanceOfClass(PrimeCalculator.class);
 
 		assertEquals(95, primeCalculator.amountOfPrimesUnder(500));
