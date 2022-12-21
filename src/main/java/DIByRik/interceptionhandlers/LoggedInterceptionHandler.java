@@ -19,12 +19,12 @@ public class LoggedInterceptionHandler implements InterceptionHandler {
 	@Override
 	public MethodHandler getMethodHandler(Object instance) {
 		return (self, method, proceed, args) -> {
-			log.info("Invoking: " + method.getName());
+			log.debug("Invoking: " + method.getName());
 
 			try {
 				return method.invoke(instance, args);
 			} finally {
-				log.info("Finished invoking: " + method.getName());
+				log.debug("Finished invoking: " + method.getName());
 			}
 		};
 	}

@@ -210,7 +210,7 @@ public class DependencyContainer {
 
         instances.put(clazz, instance);
         if (clazz != instance.getClass()) {
-            log.debug("Instance of {} is actually an instance of {}, putting extra reference in instances",
+            log.trace("Instance of {} is actually an instance of {}, putting extra reference in instances",
                     clazz.getSimpleName(), instance.getClass().getSimpleName());
             instances.put(instance.getClass(), instance);
         }

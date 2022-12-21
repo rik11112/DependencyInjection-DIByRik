@@ -27,7 +27,7 @@ public class TimedInterceptionHandler implements InterceptionHandler {
 				return method.invoke(instance, args);
 			} finally {
 				long diffInMillies = ChronoUnit.MILLIS.between(start, LocalDateTime.now());
-				log.info(String.format("Invoking: %s took %d milliseconds", method.getName(), diffInMillies));
+				log.debug(String.format("Invoking: %s took %d milliseconds", method.getName(), diffInMillies));
 			}
 		};
 	}
