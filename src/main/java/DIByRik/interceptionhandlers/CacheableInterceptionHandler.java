@@ -1,18 +1,19 @@
 package DIByRik.interceptionhandlers;
 
-import DIByRik.DependencyContainer;
 import DIByRik.annotations.interception.Cacheable;
 import javassist.util.proxy.MethodHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.logging.Logger;
+
 
 public class CacheableInterceptionHandler implements InterceptionHandler {
 	private final Map<Method, Map<String, Object>> cache = new java.util.HashMap<>();
-	private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
+	private static final Logger log = LogManager.getLogger();
 
 	@Override
 	public boolean appliesTo(Class<? extends Annotation> annotation) {
@@ -28,7 +29,7 @@ public class CacheableInterceptionHandler implements InterceptionHandler {
 				Map<String, Object> methodCache = cache.get(method);
 				if (methodCache.containsKey(argsKey)) {
 					// cache hit, return previous result
-					log.fine(String.format("Cache hit for method: %s with args: %s", method.getName(), argsKey));
+					log.trace(String.format("Cache hit for method: %s with args: %s", method.getName(), argsKey));
 					return methodCache.get(argsKey);
 				}
 			} else {
@@ -38,7 +39,7 @@ public class CacheableInterceptionHandler implements InterceptionHandler {
 
 			// cache miss, invoke method and store result
 			Object result = method.invoke(instance, args);
-			log.fine(String.format("Caching method: %s with args: %s", method.getName(), argsKey));
+			log.trace(String.format("Caching method: %s with args: %s", method.getName(), argsKey));
 
 			cache.get(method).put(argsKey, result);
 

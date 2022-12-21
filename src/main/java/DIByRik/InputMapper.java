@@ -5,12 +5,13 @@ import DIByRik.utils.ParsingUtils;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class InputMapper {
 	private final DependencyContainer dependencyContainer;
 	private final Map<String, Method> routes;
-	private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
+	private static final Logger log = LogManager.getLogger();
 
 	private final Map<Class<?>, Function<String, ?>> paramParsers = ParsingUtils.paramParsers();
 
@@ -45,20 +46,18 @@ public class InputMapper {
 			// Find the method that handles the input and invoke it
 			var routeHandler = routes.get(route);
 			if (routeHandler == null) {
-				log.setParent(Logger.getLogger(InputMapper.class.getName()));
 				log.info("No route found for input: " + input);
 			} else {
 				try {
-					log.setParent(Logger.getLogger(routeHandler.getDeclaringClass().getName()));
-					log.info(routeHandler.invoke(dependencyContainer.getInstanceOfClass(routeHandler.getDeclaringClass()), convertArgs(routeHandler, args)).toString());
+					log.info("Response: " + routeHandler.invoke(dependencyContainer.getInstanceOfClass(routeHandler.getDeclaringClass()), convertArgs(routeHandler, args)).toString());
 				} catch (ArrayIndexOutOfBoundsException e) {
 					if (routeHandler.getParameterCount() != args.length) {
-						log.warning(String.format("method %s on route %s expected %d arguments but got %d", routeHandler.getName(), route, routeHandler.getParameterCount(), args.length));
+						log.warn(String.format("method %s on route %s expected %d arguments but got %d", routeHandler.getName(), route, routeHandler.getParameterCount(), args.length));
 					} else {
-						log.warning(String.format("method %s on route %s with args %s threw an ArrayIndexOutOfBoundsException", routeHandler.getName(), route, Arrays.toString(args)));
+						log.error(String.format("method %s on route %s with args %s threw an ArrayIndexOutOfBoundsException", routeHandler.getName(), route, Arrays.toString(args)));
 					}
 				} catch (Exception e) {
-					log.warning(String.format("method %s on route %s with args %s threw an exception: %s, stacktrace: %s",
+					log.error(String.format("method %s on route %s with args %s threw an exception: %s, stacktrace: %s",
 							routeHandler.getName(), route, Arrays.toString(args), e.getClass().getSimpleName(), Arrays.toString(e.getStackTrace())));
 				}
 			}

@@ -1,15 +1,14 @@
 package interception;
 
 import DIByRik.DIByRikApplication;
-import DIByRik.DependencyContainer;
 import org.junit.jupiter.api.Test;
-
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InterceptionTests {
-	private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
+	private static final Logger log = LogManager.getLogger();
 
 	@Test
 	void cachedMethodsShouldRunFasterTheSecondTimeWithSameArgsAndStillReturnTheRightResult() {

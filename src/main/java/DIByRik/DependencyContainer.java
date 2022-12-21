@@ -8,8 +8,8 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -27,14 +27,14 @@ public class DependencyContainer {
     private final Set<Class<?>> eagerInitClasses;
     private final SimpleDirectedGraph<Class<?>, DefaultEdge> dependencyGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
     private final Map<Class<?>, Object> instances = new HashMap<>();
-    private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
+    private static final Logger log = LogManager.getLogger();
     private final InterceptionResolver interceptionResolver = new InterceptionResolver();
 
     public DependencyContainer(Class<?> mainClass, DependencyResolver resolver) {
         if (isInitialised) {
             throw new IllegalStateException("DependencyContainer is already initialised");
         }
-        log.fine("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
+        log.trace("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
         components = resolver.getComponents();
         beans = resolver.getBeans();
         eagerInitClasses = resolver.getEagerInitClasses();
@@ -187,7 +187,7 @@ public class DependencyContainer {
      * @return The created instance
      */
     private Object createInstance(Class<?> clazz) {
-        log.log(Level.FINE, String.format("Creating instance of %s", clazz.getSimpleName()));
+        log.trace("Creating instance of {}", clazz.getSimpleName());
         Object instance = getBean(clazz);   //Check if there's a bean for the class
 
         if (instance == null) {
@@ -210,8 +210,8 @@ public class DependencyContainer {
 
         instances.put(clazz, instance);
         if (clazz != instance.getClass()) {
-            log.log(Level.FINE, String.format("Instance of %s is actually an instance of %s, putting extra reference in instances",
-                    clazz.getSimpleName(), instance.getClass().getSimpleName()));
+            log.debug("Instance of {} is actually an instance of {}, putting extra reference in instances",
+                    clazz.getSimpleName(), instance.getClass().getSimpleName());
             instances.put(instance.getClass(), instance);
         }
 

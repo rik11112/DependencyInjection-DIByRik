@@ -5,10 +5,11 @@ import DIByRik.annotations.interception.Logged;
 import javassist.util.proxy.MethodHandler;
 
 import java.lang.annotation.Annotation;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class LoggedInterceptionHandler implements InterceptionHandler {
-	private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
+	private static final Logger log = LogManager.getLogger();
 
 	@Override
 	public boolean appliesTo(Class<? extends Annotation> annotation) {
