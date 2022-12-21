@@ -34,7 +34,7 @@ public class DependencyContainer {
         if (isInitialised) {
             throw new IllegalStateException("DependencyContainer is already initialised");
         }
-        log.info("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
+        log.fine("DependencyContainer: Initialising with package name: " + mainClass.getPackageName());
         components = resolver.getComponents();
         beans = resolver.getBeans();
         eagerInitClasses = resolver.getEagerInitClasses();

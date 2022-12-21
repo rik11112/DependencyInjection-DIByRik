@@ -8,7 +8,7 @@ public class PrimeCalculator {
 		int count = 1;  // 2 is prime
 
 		// Not the most efficient way to do this, but it's a demo of @Cacheable
-		// But at least skip the even numbers
+		// But it at least skips the even numbers
 		for (int i = 3; i < max; i += 2) {
 			if (isPrime(i)) {
 				count++;
