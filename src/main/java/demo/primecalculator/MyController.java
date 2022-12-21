@@ -11,13 +11,13 @@ public class MyController {
         this.randomClass = randomClass;
     }
 
-    @InputMapping(input = "doSomething")
+    @InputMapping(route = "doSomething")
     public String doSomething() {
          return randomClass.expensiveMethod("foo");
     }
 
-    @InputMapping(input = "doSomethingElse")
-    public void doSomethingElse() {
-        System.out.println("I'm doing something else!");
+    @InputMapping(route = "doSomethingElse")
+    public String doSomethingElse() {
+        return "I'm doing something else!";
     }
 }

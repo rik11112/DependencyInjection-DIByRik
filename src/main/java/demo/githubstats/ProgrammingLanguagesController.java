@@ -14,7 +14,7 @@ public class ProgrammingLanguagesController {
 		this.programmingLanguagesService = programmingLanguagesService;
 	}
 
-	@InputMapping(input = "getLanguageAtRank")
+	@InputMapping(route = "getLanguageAtRank")
 	public ProgrammingLanguageRanking getByPosition(int pos) {
 		var language = programmingLanguagesService.getByPosition(pos);
 		if (language == null) {
@@ -23,7 +23,7 @@ public class ProgrammingLanguagesController {
 		return language;
 	}
 
-	@InputMapping(input = "getAllLanguages")
+	@InputMapping(route = "getAllLanguages")
 	public List<ProgrammingLanguageRanking> getAll() {
 		return programmingLanguagesService.getAll();
 	}

@@ -42,7 +42,13 @@ public class DependencyResolver {
         reflections.getTypesAnnotatedWith(Controller.class).stream()
                 .flatMap(c -> Arrays.stream(c.getDeclaredMethods()))
                 .filter(m -> m.isAnnotationPresent(InputMapping.class))
-                .forEach(m -> routes.put(m.getAnnotation(InputMapping.class).input(), m));
+                .forEach(m -> {
+                    var route = m.getAnnotation(InputMapping.class).route();
+                    if (route.contains(" ")) {
+                        throw new RuntimeException();
+                    }
+                    routes.put(route, m);
+                });
     }
 
     public Set<Class<?>> getComponents() {
