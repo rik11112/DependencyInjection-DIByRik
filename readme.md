@@ -129,7 +129,7 @@ Je kan een methode van een component laten intercepteren door de methode te anno
 
 #### Interception annotaties
 
-Er zijn een aantal standaard interceptions die je zo kan gebruiken.
+Er zijn een aantal interceptions die je kan gebruiken.
 
 - `@Cacheable`: Dit zal de output van een methode met een bepaalde input opslagen, wanneer de methode opnieuw wordt aangeroepen met dezelfde input zal de methode niet opnieuw uitgevoerd worden, maar zal de output van de vorige keer worden terug gegeven.
   - Dit is handig als je een methode hebt die een zware berekening uitvoert, maar je weet dat de output van de methode niet zal veranderen.

@@ -28,7 +28,7 @@ public class InterceptionTests {
 
 		log.info(String.format("Time 1: %d, Time 2: %d, Difference: %d", time1, time2, time1 - time2));
 		assertEquals(amountOfPrimesUnder1000_1, amountOfPrimesUnder1000_2);
-		assertTrue(time2 < time1);
+		assertTrue(time2 * 10 < time1);	// at least 10x faster, than we can be pretty sure it worked
 	}
 
 	@Test
