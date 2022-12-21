@@ -15,8 +15,12 @@ public class ProgrammingLanguagesController {
 	}
 
 	@InputMapping(input = "getLanguageAtRank")
-	public ProgrammingLanguageRanking getByPosition(String pos) {
-		return programmingLanguagesService.getByPosition(Integer.parseInt(pos));
+	public ProgrammingLanguageRanking getByPosition(int pos) {
+		var language = programmingLanguagesService.getByPosition(pos);
+		if (language == null) {
+			throw new IllegalArgumentException("No language found at position " + pos);
+		}
+		return language;
 	}
 
 	@InputMapping(input = "getAllLanguages")

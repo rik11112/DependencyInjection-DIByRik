@@ -1,17 +1,20 @@
 package DIByRik;
 
 import DIByRik.annotations.InputMapping;
+import DIByRik.utils.ParsingUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 public class InputMapper {
 	private final DependencyContainer dependencyContainer;
 	private final Map<String, Method> routes;
 	private static final Logger log = Logger.getLogger(DependencyContainer.class.getName());
+
+	private final Map<Class<?>, Function<String, ?>> paramParsers = ParsingUtils.paramParsers();
 
 	public InputMapper(DependencyContainer dependencyContainer, DependencyResolver resolver) {
 		this.dependencyContainer = dependencyContainer;
@@ -49,14 +52,31 @@ public class InputMapper {
 			} else {
 				try {
 					log.setParent(Logger.getLogger(routeHandler.getDeclaringClass().getName()));
-					log.info(routeHandler.invoke(dependencyContainer.getInstanceOfClass(routeHandler.getDeclaringClass()), args).toString());
-				} catch (NullPointerException e) {
-					log.warning(String.format("method %s on route %s with args %s returned null", routeHandler.getName(), route, Arrays.toString(args)));
+					log.info(routeHandler.invoke(dependencyContainer.getInstanceOfClass(routeHandler.getDeclaringClass()), convertArgs(routeHandler, args)).toString());
+				} catch (ArrayIndexOutOfBoundsException e) {
+					if (routeHandler.getParameterCount() != args.length) {
+						log.warning(String.format("method %s on route %s expected %d arguments but got %d", routeHandler.getName(), route, routeHandler.getParameterCount(), args.length));
+					} else {
+						log.warning(String.format("method %s on route %s with args %s threw an ArrayIndexOutOfBoundsException", routeHandler.getName(), route, Arrays.toString(args)));
+					}
 				} catch (Exception e) {
-					//TODO: maak beter
-					log.warning(e.getClass().getSimpleName() + " calling: " + routeHandler.getName() + ", message: " + e.getMessage());
+					log.warning(String.format("method %s on route %s with args %s threw an exception: %s, stacktrace: %s",
+							routeHandler.getName(), route, Arrays.toString(args), e.getClass().getSimpleName(), Arrays.toString(e.getStackTrace())));
 				}
 			}
 		}
+	}
+
+	Object[] convertArgs(Method method, Object[] args) {
+		var convertedArgs = new Object[args.length];
+		var parameters = method.getParameterTypes();
+		for (int i = 0; i < args.length; i++) {
+			var parser = paramParsers.get(parameters[i]);
+			if (parser == null) {
+				throw new IllegalArgumentException(String.format("No parser found for type: %s on method: %s", method.getParameterTypes()[i], method.getName()));
+			}
+			convertedArgs[i] = paramParsers.get(method.getParameterTypes()[i]).apply((String) args[i]);
+		}
+		return convertedArgs;
 	}
 }
